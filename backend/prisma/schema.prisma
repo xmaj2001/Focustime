@@ -1,0 +1,81 @@
+datasource db {
+  provider = "postgresql" // ou sqlite/mysql
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id          String      @id @default(cuid())
+  name        String
+  email       String      @unique
+  password    String
+  avatarUrl   String?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  // Relações
+  devices     Device[]
+  otps        OTP[]
+  groupTimes  GroupTime[]
+}
+
+model Device {
+  id        String   @id @default(cuid())
+  name      String
+  userAgent String?
+  ip        String?
+  createdAt DateTime @default(now())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+model OTP {
+  id        String   @id @default(cuid())
+  code      String
+  expiresAt DateTime
+  used      Boolean  @default(false)
+  type      OTPType  @default(EMAIL_VERIFICATION)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+enum OTPType {
+  EMAIL_VERIFICATION
+  PASSWORD_RESET
+  TWO_FACTOR
+}
+
+model GroupTime {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  totalHours  Float    // Ex: 8h disponíveis
+  color       String?  // cor do grupo no app
+  createdAt   DateTime @default(now())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  tasks       Task[]
+}
+
+model Task {
+  id          String     @id @default(cuid())
+  title       String
+  description String?
+  duration    Float       // em horas (ex: 1.5 = 1h30)
+  startTime   DateTime?
+  endTime     DateTime?
+  status      TaskStatus  @default(PENDING)
+  createdAt   DateTime    @default(now())
+  groupTimeId String
+  groupTime   GroupTime   @relation(fields: [groupTimeId], references: [id])
+}
+
+enum TaskStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+}
+
