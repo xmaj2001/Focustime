@@ -1,7 +1,5 @@
 ## 💡 FocusTime
 
----
-
 ## 🎯 Conceito principal:
 
 Um app simples pra **gerir teu tempo diário** com base nas tuas rotinas e tarefas estimadas.
@@ -60,20 +58,6 @@ A ideia é que tu **planejas o teu dia em blocos de tempo** (tipo “matabichar 
 * **Backend** (opcional): NestJS + Supabase (pra login, histórico etc.)
 * **Notificações**: Expo Notifications (ou Firebase Cloud Messaging)
 * **Banco local**: SQLite ou AsyncStorage (pra rodar offline)
-
----
-
-## 📱 Exemplo rápido de fluxo:
-
-| Etapa | Ação                | Exemplo                       |
-| ----- | ------------------- | ----------------------------- |
-| 1     | Abres o app         | “Tenho 10h hoje”              |
-| 2     | Adicionas tarefas   | “Matabichar – 20min”          |
-| 3     | App mostra timeline | Visual do teu dia dividido    |
-| 4     | Notificação         | “Hora de Matabichar 🍳”       |
-| 5     | Timer acaba         | “Próxima: Aula de Cálculo 🧮” |
-| 6     | Fim do dia          | Resumo com o que fizeste      |
-
 ---
 
 Quer que eu desenhe **um wireframe (layout visual)** de como ficaria a tela principal e o fluxo do app (tipo mockupzinho do app)?
