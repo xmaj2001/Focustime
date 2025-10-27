@@ -1,7 +1,3 @@
-Boa, Max 🔥 essa ideia tá muito maneira — bem na pegada de “time management” pessoal, mas com uma vibe mais **real e prática pro dia a dia**. Bora deixar ela redonda:
-
----
-
 ## 💡 FocusTime
 
 ---
