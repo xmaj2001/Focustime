@@ -1,13 +1,12 @@
 import { Module } from '@nestjs/common';
 import { PrismaModule } from 'nestjs-prisma';
-import { AppController } from './modules/app/app.controller';
-import { AppService } from './modules/app/app.service';
+import { AppController } from './app/app.controller';
+import { AppService } from './app/app.service';
 import { CacheModule } from '@nestjs/cache-manager';
 import { getCacheTTL } from './utils/tll';
 import { UserModule } from './modules/user/user.module';
-import { TournamentModule } from './modules/tournament/tournament.module';
+import { JwtModule } from '@nestjs/jwt';
 import { AuthModule } from './modules/auth/auth.module';
-
 
 @Module({
   controllers: [AppController],
@@ -18,9 +17,15 @@ import { AuthModule } from './modules/auth/auth.module';
       ttl: getCacheTTL('1h'), // seconds
       max: getCacheTTL('12h'), // maximum number of items in cache
     }),
+    JwtModule.register({
+      global: true,
+      secret: process.env.JWT_SECRET || 'defaultSecret',
+      signOptions: {
+        expiresIn: '1h',
+      },
+    }),
     PrismaModule.forRoot(),
     UserModule,
-    TournamentModule,
     AuthModule,
   ],
 })

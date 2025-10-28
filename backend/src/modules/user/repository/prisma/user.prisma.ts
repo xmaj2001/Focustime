@@ -1,58 +1,43 @@
-import { Injectable } from "@nestjs/common";
-import UserRepository from "../user.repository";
-import { CreateUserDto, UpdateUserDto } from "../../dto/user.dto";
-import { UserEntity } from "../../entities/user.entity";
-import { PrismaService } from "nestjs-prisma";
+import { Injectable } from '@nestjs/common';
+import { PrismaService } from 'nestjs-prisma';
+import { UserRepository } from '../user.repository';
+import { CreateUserDto, UpdateUserDto } from '../../dto/user.dto';
+import { UserEntity } from '../../entities/user.entity';
 
 @Injectable()
-export class UserPrismaRepository implements UserRepository {
-    constructor(private prisma: PrismaService) { }
-    async create(userData: CreateUserDto): Promise<UserEntity> {
-        const user = await this.prisma.user.create({
-            data: userData,
-        });
-        return new UserEntity(user);
-    }
+export class PrismaUserRepository implements UserRepository {
+  constructor(private readonly prisma: PrismaService) {}
 
-    async update(id: string, updateData: UpdateUserDto): Promise<UserEntity> {
-        const updatedUser = await this.prisma.user.update({
-            where: { id },
-            data: updateData,
-        });
+  async create(data: CreateUserDto): Promise<UserEntity> {
+    const user = await this.prisma.user.create({ data });
+    return new UserEntity(user);
+  }
 
-        return updatedUser as UserEntity;
-    }
+  async findByEmail(email: string): Promise<UserEntity | null> {
+    const user = await this.prisma.user.findUnique({ where: { email } });
+    return user ? new UserEntity(user) : null;
+  }
 
-    async findById(id: string): Promise<UserEntity | null> {
-        const user = await this.prisma.user.findUnique({
-            where: { id },
-        });
+  async findById(id: string): Promise<UserEntity | null> {
+    const user = await this.prisma.user.findUnique({ where: { id } });
+    return user ? new UserEntity(user) : null;
+  }
 
-        if (!user) {
-            return null;
-        }
-        return user as UserEntity;
-    }
+  async findAll(): Promise<UserEntity[]> {
+    const users = await this.prisma.user.findMany();
+    return users.map((u) => new UserEntity(u));
+  }
 
-    async findByEmail(email: string): Promise<UserEntity | null> {
-        const user = await this.prisma.user.findUnique({
-            where: { email },
-        });
+  async update(id: string, data: UpdateUserDto): Promise<UserEntity | null> {
+    const user = await this.prisma.user.update({
+      where: { id },
+      data,
+    });
+    return user ? new UserEntity(user) : null;
+  }
 
-        if (!user) {
-            return null;
-        }
-        return user as UserEntity;
-    }
-
-    async findAll(): Promise<UserEntity[]> {
-        const users = await this.prisma.user.findMany();
-        return users as UserEntity[];
-    }
-
-    async delete(id: string): Promise<void> {
-        await this.prisma.user.delete({
-            where: { id },
-        });
-    }
+  async delete(id: string): Promise<boolean> {
+    await this.prisma.user.delete({ where: { id } });
+    return true;
+  }
 }

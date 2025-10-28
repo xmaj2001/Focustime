@@ -1,42 +1,48 @@
-import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Put,
+  UseGuards,
+} from '@nestjs/common';
 import { UserService } from '../services/user.service';
-import { CreateUserDto } from '../dto/user.dto';
-
+import { UserProfile } from '../entities/user.entity';
+import { UpdateUserDto } from '../dto/user.dto';
+import { AuthGuard } from 'src/modules/auth/guards/auth.guard';
 
 @Controller('users')
 export class UserController {
-  constructor(private readonly userService: UserService) { }
+  constructor(private readonly service: UserService) {}
 
-  @Post()
-  async create(@Body() userData: CreateUserDto) {
-    return this.userService.create(userData);
+  @Get()
+  @UseGuards(AuthGuard)
+  async getAll(): Promise<UserProfile[]> {
+    return this.service.getAll();
   }
 
   @Get(':id')
-  async findById(@Param('id') id: string) {
-    return this.userService.findById(id);
+  async getById(@Param('id') id: string): Promise<UserProfile | null> {
+    return this.service.getById(id);
   }
 
   @Get('email/:email')
-  async findByEmail(@Param('email') email: string) {
-    return this.userService.findByEmail(email);
-  }
-
-  @Get()
-  async findAll() {
-    return this.userService.findAll();
+  async getByEmail(@Param('email') email: string): Promise<UserProfile | null> {
+    return this.service.getByEmail(email);
   }
 
   @Put(':id')
-  async update(@Param('id') id: string, @Body() userData: CreateUserDto) {
-    return this.userService.update(id, userData);
+  async update(
+    @Param('id') id: string,
+    @Body() data: UpdateUserDto,
+  ): Promise<UserProfile | null> {
+    return this.service.update(id, data);
   }
 
+  @UseGuards(AuthGuard)
   @Delete(':id')
-  async delete(@Param('id') id: string) {
-    return this.userService.delete(id);
+  async delete(@Param('id') id: string): Promise<boolean> {
+    return this.service.delete(id);
   }
-
 }
-
-
